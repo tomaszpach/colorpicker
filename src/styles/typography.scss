@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css?family=Comfortaa:300,400,700|IBM+Plex+Serif|Limelight');
+
+$mainFont: 'IBM Plex Serif', serif;
+$secondaryFont: 'Comfortaa', cursive;
+
+body, p, span {
+    font-family: $secondaryFont;
+    font-size: 16px;
+    font-weight: 300;
+    color: #1F1F1F;
+}
+
+body {
+    box-shadow: rgba(0, 0, 0, 0.12) 0 1px 6px, rgba(0, 0, 0, 0.12) 0 1px 4px;
+    padding: 5px;
+    min-height: calc(100vh - 26px);
+}
+
+h1 {
+    font-family: $mainFont;
+    color: #1F1F1F;
+    font-size: 46px;
+    margin: 0;
+}
+
+h2 {
+    @extend h1;
+    font-size: 36px;
+}
+
+h3 {
+    @extend h1;
+    font-size: 30px;
+}
+
+h4 {
+    @extend h1;
+    font-size: 24px;
+}
+
+h5 {
+    @extend h1;
+    font-size: 18px;
+}
+
+h6 {
+    @extend h1;
+    font-size: 14px;
+}
+
+p {
+    font-family: $secondaryFont;
+    font-size: 16px;
+    font-weight: 300;
+    color: #1F1F1F;
+}
