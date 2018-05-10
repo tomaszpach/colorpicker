@@ -6,8 +6,6 @@ const initialState = {
 };
 
 const colors = (state = initialState, action) => {
-    // console.log(state);
-    // console.log(action);
     switch (action.type) {
         case 'FETCH_DATA':
             return { ...state, fetchedColors: action.payload };

@@ -47,15 +47,17 @@ export class colorPicker extends React.Component {
         const {autoSuggestionVisibility, updatedColors} = this.props;
 
         const colorList = (
-            <ul>
-                {
-                    this.props.updatedColors.map(item => {
-                        return <li style={{backgroundColor: `#${item.hex}` ,cursor: 'pointer'}}
-                                   onClick={() => this.setState({selectedColor: getRgbaFromHex(item.hex)})}
-                                   key={item.name}>{item.name}</li>
-                    })
-                }
-            </ul>
+            autoSuggestionVisibility ? (
+                <ul>
+                    {
+                        this.props.updatedColors.map(item => {
+                            return <li style={{backgroundColor: `#${item.hex}` ,cursor: 'pointer'}}
+                                       onClick={() => this.setState({selectedColor: getRgbaFromHex(item.hex)})}
+                                       key={item.name}>{item.name}</li>
+                        })
+                    }
+                </ul>
+                ) : null
         );
         const changeColorButton = (
             autoSuggestionVisibility && updatedColors.length > 0 ? (
@@ -67,7 +69,7 @@ export class colorPicker extends React.Component {
 
         );
         return (
-            <div className="color-picker">
+            <div id="color-picker">
                 <input type="text" placeholder="Search colors" onChange={(e) => this.filterListAndUpdateColors(e)}/>
                 {changeColorButton}
                 {colorList}

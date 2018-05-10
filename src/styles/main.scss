@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Comfortaa:300,400,700|IBM+Plex+Serif|Limelight');
 
 html {
-    background-color: #85bb65;
+    border: 15px solid #85bb65;
 
     body {
         background-color: #fff;
@@ -28,6 +28,12 @@ html {
                     min-width: 40%;
                     padding: 5px;
                 }
+            }
+
+            button {
+                padding: 5px 15px;
+                border: 1px solid inherit;
+                border-radius: 5px;
             }
         }
     }

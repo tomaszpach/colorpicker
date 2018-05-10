@@ -19,7 +19,7 @@ export class fetchColors extends React.Component {
         const { fetchedColors } = this.props;
 
         return (
-            <div>{fetchedColors.length > 0 ? (<span>Ready to use</span>) : (<span>Downloading data</span>)}</div>
+            <div id="ready-check">{fetchedColors.length > 0 ? (<span>Ready to use</span>) : (<span>Downloading data</span>)}</div>
         )
     }
 }
