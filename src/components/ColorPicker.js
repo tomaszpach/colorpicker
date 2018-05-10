@@ -6,24 +6,14 @@ export default class colorPicker extends React.Component {
         this.state = {
             colors: [],
             updatedColors: [],
-            selectedColor: '#fff',
-            initialItems: [
-                "aliceblue",
-                "antiquewhite",
-                "aqua"
-            ],
-            items: [
-                "aliceblue",
-                "antiquewhite",
-                "aqua"
-            ]
+            selectedColor: 'rgba(255, 255, 255, 100%)',
+            setColor: 'rgba(255, 255, 255, 100%)',
+            showAutoSuggest: false
         }
     }
 
     componentDidMount() {
-        console.log('ColorPicker na pokładzie!');
         this.fetchColors();
-        console.log('inital state', this.state.initialItems);
     }
 
     fetchColors() {
@@ -32,26 +22,32 @@ export default class colorPicker extends React.Component {
             .then(results => {
                 this.setState({
                     colors: results
-                }, () => {
-                    // console.log(`Arrr! Znalazłem łącznie: ${results.length} kolory.`);
-                    console.log(results);
                 })
             })
     }
 
-    filterList(event) {
+    showAutoSuggest(valueLength) {
+        if (valueLength >= 2) {
+            this.setState({
+                showAutoSuggest: true
+            });
+        } else {
+            this.setState({
+                showAutoSuggest: false
+            });
+        }
+    }
+
+    filterListAndUpdateColors(event) {
         let value = event.target.value,
             valueString = value.toString(),
             valueLength = valueString.length;
 
-        console.log(valueLength);
+        this.showAutoSuggest(valueLength);
 
         if (valueLength >= 2) {
             let updatedList = this.state.colors;
-
-            console.log('updatedList 11s1', updatedList);
-            console.log('this.state.colors', this.state.colors);
-            updatedList = updatedList.filter( item => {
+            updatedList = updatedList.filter(item => {
                 return item.name.toLowerCase().search(
                     event.target.value.toLowerCase()) !== -1;
             });
@@ -59,7 +55,6 @@ export default class colorPicker extends React.Component {
             this.setState({
                 updatedColors: updatedList
             });
-            console.log('second updated list', updatedList)
         } else {
             this.setState({
                 updatedColors: []
@@ -67,23 +62,51 @@ export default class colorPicker extends React.Component {
         }
     }
 
+    hexToRgb(hex) {
+        let shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+        hex = hex.replace(shorthandRegex, function (m, r, g, b) {
+            return r + r + g + g + b + b;
+        });
+
+        let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : null;
+    }
+
+    getRgbaFromHex(hex, alpha = '50%') {
+        let rgbObj = this.hexToRgb(hex);
+        return `rgba(${rgbObj.r}, ${rgbObj.g}, ${rgbObj.b}, ${alpha})`;
+    }
+
+    setBackgroundColor() {
+        this.setState({
+            setColor: this.state.selectedColor || 'rgba(255, 255, 255, 100%)'
+        })
+    }
+
     render() {
-        let style = {
-            backgroundColor: this.state.selectedColor
-        };
         const colorList = (
             <ul>
                 {
                     this.state.updatedColors.map(item => {
-                        return <li onClick={() => this.setState({ selectedColor: `#${item.hex}` }, () => console.log(this.state.selectedColor))} key={item.name} hex={item.hex}>{item.name}</li>
-                        // return console.log(item.name)
+                        return <li style={{cursor: 'pointer'}}
+                            onClick={() => this.setState({selectedColor: this.getRgbaFromHex(item.hex)})}
+                            key={item.name}>{item.name}</li>
                     })
                 }
             </ul>
         );
+        const changeColorButton = (
+            <button onClick={() => this.setBackgroundColor()}
+                    style={{backgroundColor: this.state.selectedColor, cursor: 'pointer'}}>Accept</button>
+        );
         return (
-            <div style={style} className="color-picker">
-                <input type="text" placeholder="Search" onChange={(e) => this.filterList(e)}/>
+            <div style={{backgroundColor: this.state.setColor}} className="color-picker">
+                <input type="text" placeholder="Search" onChange={(e) => this.filterListAndUpdateColors(e)}/>
+                {changeColorButton}
                 {colorList}
             </div>
         )
