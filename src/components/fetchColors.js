@@ -16,14 +16,16 @@ export class fetchColors extends React.Component {
     }
 
     render() {
+        const { fetchedColors } = this.props;
+
         return (
-            <div>{this.props.data ? (<span>Ready to use</span>) : (<span>Downloading data</span>)}</div>
+            <div>{fetchedColors.length > 0 ? (<span>Ready to use</span>) : (<span>Downloading data</span>)}</div>
         )
     }
 }
 
 const mapStateToProps = (state) => {
-    return {data: state.colors.data}
+    return {fetchedColors: state.colors.fetchedColors}
 };
 
 function mapDispatchToProps(dispatch) {

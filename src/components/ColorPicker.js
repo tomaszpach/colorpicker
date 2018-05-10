@@ -1,27 +1,22 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import { getRgbaFromHex } from '../utils'
+import {getRgbaFromHex} from '../utils'
+import {updateColors, toggleSuggestionVisibility, setBgColor} from "../actions";
 
 export class colorPicker extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            updatedColors: [],
             selectedColor: 'rgba(255, 255, 255, 100%)',
-            setColor: 'rgba(255, 255, 255, 100%)',
-            showAutoSuggest: false
+            setColor: 'rgba(255, 255, 255, 100%)'
         }
     }
 
-    showAutoSuggest(valueLength) {
+    isSuggestionVisible(valueLength) {
         if (valueLength >= 2) {
-            this.setState({
-                showAutoSuggest: true
-            });
+            this.props.toggleSuggestionVisibility(true);
         } else {
-            this.setState({
-                showAutoSuggest: false
-            });
+            this.props.toggleSuggestionVisibility(false);
         }
     }
 
@@ -30,52 +25,50 @@ export class colorPicker extends React.Component {
             valueString = value.toString(),
             valueLength = valueString.length;
 
-        this.showAutoSuggest(valueLength);
+        this.isSuggestionVisible(valueLength);
 
         if (valueLength >= 2) {
-            let updatedList = this.props.data;
+            let updatedList = this.props.fetchedColors;
             updatedList = updatedList.filter(item => {
                 return item.name.toLowerCase().search(
                     event.target.value.toLowerCase()) !== -1;
             });
-
-            this.setState({
-                updatedColors: updatedList
-            }, () => {
-                console.log(updatedList);
-            });
+            this.props.updateColors(updatedList);
         } else {
-            this.setState({
-                updatedColors: []
-            })
+            this.props.updateColors([]);
         }
     }
 
     setBackgroundColor() {
-        this.setState({
-            setColor: this.state.selectedColor || 'rgba(255, 255, 255, 100%)'
-        })
+        this.props.setBgColor(this.state.selectedColor || 'rgba(255, 255, 255, 100%');
     }
 
     render() {
+        const {autoSuggestionVisibility, updatedColors} = this.props;
+
         const colorList = (
             <ul>
                 {
-                    this.state.updatedColors.map(item => {
-                        return <li style={{cursor: 'pointer'}}
-                            onClick={() => this.setState({selectedColor: getRgbaFromHex(item.hex)})}
-                            key={item.name}>{item.name}</li>
+                    this.props.updatedColors.map(item => {
+                        return <li style={{backgroundColor: `#${item.hex}` ,cursor: 'pointer'}}
+                                   onClick={() => this.setState({selectedColor: getRgbaFromHex(item.hex)})}
+                                   key={item.name}>{item.name}</li>
                     })
                 }
             </ul>
         );
         const changeColorButton = (
-            <button onClick={() => this.setBackgroundColor()}
-                    style={{backgroundColor: this.state.selectedColor, cursor: 'pointer'}}>Accept</button>
+            autoSuggestionVisibility && updatedColors.length > 0 ? (
+                <div>
+                    <button onClick={() => this.setBackgroundColor()}
+                            style={{backgroundColor: this.state.selectedColor, cursor: 'pointer'}}>Accept</button>
+                </div>
+            ) : null
+
         );
         return (
-            <div style={{backgroundColor: this.state.setColor}} className="color-picker">
-                <input type="text" placeholder="Search" onChange={(e) => this.filterListAndUpdateColors(e)}/>
+            <div className="color-picker">
+                <input type="text" placeholder="Search colors" onChange={(e) => this.filterListAndUpdateColors(e)}/>
                 {changeColorButton}
                 {colorList}
             </div>
@@ -84,7 +77,19 @@ export class colorPicker extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-    return { data: state.colors.data }
+    return {
+        fetchedColors: state.colors.fetchedColors,
+        updatedColors: state.colors.updatedColors,
+        autoSuggestionVisibility: state.colors.isAutosuggestionVisible
+    }
 };
 
-export default connect(mapStateToProps)(colorPicker);
+function mapDispatchToProps(dispatch) {
+    return {
+        updateColors: (params) => dispatch(updateColors(params)),
+        setBgColor: (params) => dispatch(setBgColor(params)),
+        toggleSuggestionVisibility: (params) => dispatch(toggleSuggestionVisibility(params))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(colorPicker);

@@ -1,17 +1,22 @@
 const initialState = {
-    counter: 0,
-    data: []
+    fetchedColors: [],
+    updatedColors: [],
+    setBgColor: 'rgba(255, 255, 255, 100%)',
+    isAutosuggestionVisible: false
 };
 
 const colors = (state = initialState, action) => {
-    // console.log('reducer state', state);
-    // console.log('reducer action', action);
-    // console.log('reducer action.payload', action.payload);
+    // console.log(state);
+    // console.log(action);
     switch (action.type) {
         case 'FETCH_DATA':
-            return { ...state, data: action.payload };
-        case 'INCREMENT':
-            return { ...state, counter: state.counter + 1};
+            return { ...state, fetchedColors: action.payload };
+        case 'UPDATED_COLORS':
+            return { ...state, updatedColors: action.payload };
+        case 'CHANGE_BG_COLOR':
+            return {...state, setBgColor: action.payload };
+        case 'TOGGLE_SUGGESTION_VISIBILITY':
+            return { ...state, isAutosuggestionVisible: action.payload };
         default:
             return state
     }
